@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
                 std::cout << "Status of " << selected.getName() << ":" << std::endl;
                 std::cout << "Power state: " << (selected.isTurnedOn() ? "on" : "off") << std::endl;
                 std::cout << "Current brightness: " << (int) selected.getBrightness() << "%" << std::endl;
-                std::cout << "Current temperature: " << (int) selected.getTemperature() << "K" << std::endl;
+                std::cout << "Current temperature: " << (int) convertToKelvin(selected.getTemperature()) << "K" << std::endl;
                 break;
             case 1:
                 std::cout << "What should be the new brightness? ";

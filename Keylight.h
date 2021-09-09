@@ -58,10 +58,9 @@ private:
 
     CURL *curl;
     CURLcode res;
-
-    uint16_t convertFromKelvin(int);
-    int convertToKelvin(uint16_t);
-
 };
+
+uint16_t convertFromKelvin(int);
+int convertToKelvin(uint16_t);
 
 #endif //MYKEYLIGHT_KEYLIGHT_H

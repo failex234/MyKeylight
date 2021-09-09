@@ -3,6 +3,7 @@
 using json = nlohmann::json;
 
 size_t curlCallback(char *contents, size_t size, size_t nmemb, Keylight *keylight) {
+    //Parse the json from the response and write the values to the keylight object
     json response = json::parse(contents);
 
     int turnedon = response["lights"][0]["on"];
@@ -36,21 +37,22 @@ uint16_t Keylight::getTemperature() {
 void Keylight::setBrightness(uint8_t brightn) {
     uint8_t newbrightness = brightn;
 
-    if (brightness > 100) {
+    if (brightn > 100) {
         newbrightness = 100;
     }
 
+    //Construct json
     json body;
     body["numberOfLights"] = 1;
     body["lights"] = {{
-                              {"brightness", brightn},
+                              {"brightness", newbrightness},
                       }};
     auto json_str = body.dump();
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_str.c_str());
     res = curl_easy_perform(curl);
 
     if (res == CURLE_OK) {
-        this->brightness = brightn;
+        this->brightness = newbrightness;
     }
 
 
@@ -77,7 +79,7 @@ void Keylight::setTemperature(int temp) {
     res = curl_easy_perform(curl);
 
     if (res == CURLE_OK) {
-        this->temperature = temp;
+        this->temperature = newtemp;
     }
 }
 
@@ -128,15 +130,6 @@ void Keylight::refreshInfo() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
 }
 
-uint16_t Keylight::convertFromKelvin(int kelvinval) {
-    return (uint16_t) round(987007 * pow(kelvinval, -.999));
-}
-
-int Keylight::convertToKelvin(uint16_t keylightval) {
-    //TODO: perform python like rounding
-    return (int) round(1000000 * pow(keylightval, -1));
-}
-
 void Keylight::initCurl() {
     curl = curl_easy_init();
 
@@ -151,6 +144,18 @@ void Keylight::destroyCurl() {
     if (curl) {
         curl_easy_cleanup(curl);
     }
+}
+
+uint16_t convertFromKelvin(int kelvinval) {
+    //Elgato describes the color temperature as a number between 143 and 344
+    //To get the elgato number from the kelvin we need to do this
+    //blatantly stolen from leglight
+    return (uint16_t) round(987007 * pow(kelvinval, -.999));
+}
+
+int convertToKelvin(uint16_t keylightval) {
+    //Do the rounding and then round down the last two digits (5917 -> 5900)
+    return ((int) round(1000000 * pow(keylightval, -1)) / 100) * 100;
 }
 
 
