@@ -1,7 +1,7 @@
 //
 // Created by Felix Naumann on 14.09.21.
 //
-#include <iostream>
+#include <cstring>
 
 extern int cli_main(int argc, char* argv[]);
 extern int gui_main(int argc, char* argv[]);
