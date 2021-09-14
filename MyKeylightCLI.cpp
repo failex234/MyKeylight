@@ -4,7 +4,7 @@
 
 extern bool discoverKeylights(std::vector<Keylight>*);
 
-int main(int argc, char* argv[]) {
+int cli_main(int argc, char* argv[]) {
     std::vector<Keylight> keylights;
 
     std::cout << "Searching for elgato key lights..." << std::endl;
